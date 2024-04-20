@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject bug;
+    public GameObject spider;
+    public GameObject stomper;
+    public GameObject wasp;
     public Dictionary<Vector2Int,Enemy> enemies = new Dictionary<Vector2Int, Enemy>();
 
     // Start is called before the first frame update
     void Start()
     {
-        Spawn();
-
+        SpawnEnemy(spider, 0);
+        SpawnEnemy(wasp, 1);
+        SpawnEnemy(stomper, 2);
     }
 
     // Update is called once per frame
@@ -19,10 +22,10 @@ public class EnemySpawner : MonoBehaviour
     {
     }
 
-    void Spawn()
+    void SpawnEnemy(GameObject g, int y)
     {
-        var v = Instantiate(bug);
-        var pos = new Vector2Int(10, Random.Range(0, 3));
+        var v = Instantiate(g);
+        var pos = new Vector2Int(10, y);
         v.transform.position = new Vector3(pos.x, 0, pos.y);
         enemies[pos] = v.GetComponent<Enemy>();
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
 
 // in this household we love god classes
@@ -42,10 +43,15 @@ public class GameManager : MonoBehaviour
             // the second argument, upwards, defaults to Vector3.up
             Quaternion rotation = Quaternion.LookRotation(relativePos);
             Camera.main.transform.rotation = rotation;
+            loseTime -= Time.deltaTime;
+            if(loseTime <= 0)
+            {
+                SceneManager.LoadScene("Title");
+            }
         }
 
 
-        if(Time.time >= timeForNextTick)
+        if (Time.time >= timeForNextTick)
         {
             timeForNextTick += tickStepTime;
 

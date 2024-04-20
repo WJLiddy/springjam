@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     public int strawberrySeeds = 0;
-    public int CarrotSeeds = 0;
+    public int carrotSeeds = 0;
     public int eggplantSeeds = 0;
 
     public TMPro.TMP_Text textStraw;
@@ -16,7 +16,7 @@ public class PlayerInventory : MonoBehaviour
     public void Update()
     {
         textStraw.text = strawberrySeeds.ToString();
-        textCarrot.text = CarrotSeeds.ToString();
+        textCarrot.text = carrotSeeds.ToString();
         textEggPlant.text = eggplantSeeds.ToString();
     }
 
