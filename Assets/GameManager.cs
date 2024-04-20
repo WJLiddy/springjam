@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class GameManager : MonoBehaviour
     public TileGenerator tileGenerator;
     // all the units
     public Dictionary<Vector2Int,ActionUnit> units;
+    // enemy spawner, container
+    public EnemySpawner enemySpawner;
     // player cursor
     public PlayerCursor playerCursor;
 
@@ -47,19 +50,29 @@ public class GameManager : MonoBehaviour
                 unit.clearQueueBanner();
             }
 
+            // all enemies tick (maybe on offbeat??)
+            // convert to list so that underlying datastruct can change
+            foreach(var enemy in enemySpawner.enemies.ToList())
+            {
+                // holy fuck!
+                enemy.Value.Tick(this, enemy.Key);
+            }
+
             if (actionQueue.queue.Count > 0)
             {
-                var action = actionQueue.queue.Dequeue();
+                var action = actionQueue.queue[0];
+                actionQueue.queue.RemoveAt(0);
+                actionQueue.TriggerAnimateCard(action);
 
                 // what kind of action was this?
                 if (action.unit is ActionTile)
                 {
-                    tileGenerator.tiles[action.tile].Action(this);
+                    tileGenerator.tiles[action.tile].Action(this, action.tile);
                 }
 
                 if (action.unit is ActionUnit)
                 {
-                    units[action.tile].Action(this);
+                    units[action.tile].Action(this, action.tile);
                 }
                 GetComponent<AudioSource>().Play();
             }

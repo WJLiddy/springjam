@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ActionTile : ActionSelectable
@@ -5,6 +6,8 @@ public class ActionTile : ActionSelectable
     public GameObject redPlant;
     public GameObject bluePlant;
     public GameObject greenPlant;
+
+    public GameObject growingPlantObj;
 
     public TMPro.TextMeshPro infoBannerText;
 
@@ -23,6 +26,7 @@ public class ActionTile : ActionSelectable
 
     public PlantType growingPlant;
     public int growTimeLeft = 0;
+    public const int GROW_TIME = 9;
 
     public State state = State.NONE;
     // Start is called before the first frame update
@@ -33,7 +37,7 @@ public class ActionTile : ActionSelectable
         clearQueueBanner();
     }
     
-    public override void Action(GameManager gm)
+    public override void Action(GameManager gm, Vector2Int position)
     {
         switch(state)
         {
@@ -41,7 +45,10 @@ public class ActionTile : ActionSelectable
             case State.NONE:
                 state = State.GROWING;
                 growingPlant = gm.playerCursor.selectedPlant;
-                growTimeLeft = 9;
+                growTimeLeft = GROW_TIME;
+                growingPlantObj = Instantiate(redPlant);
+                growingPlantObj.transform.SetParent(this.transform);
+                growingPlantObj.transform.localPosition = -6.25f * Vector3.up;
                 setInfoBanner(growTimeLeft);
                 break;
 
@@ -50,20 +57,10 @@ public class ActionTile : ActionSelectable
                 if (growTimeLeft == 0)
                 {
                     state = State.NONE;
-                    GameObject v = null;
-                    switch(growingPlant)
-                    {
-                        case PlantType.RED:
-                            v = Instantiate(redPlant);
-                            break;
-                        case PlantType.GREEN:
-                            v  = Instantiate(greenPlant);
-                            break;
-                        case PlantType.BLUE:
-                            v = Instantiate(bluePlant);
-                            break;
-                    }
-                    v.transform.position = this.transform.position;
+                    // transfer the growing unit to the list of all
+                    gm.units[position] = growingPlantObj.GetComponent<ActionUnit>();
+                    gm.units[position].transform.position = new Vector3(position.x, 0, position.y);
+                    growingPlantObj = null;
                 }
                 break;
         }
@@ -78,6 +75,7 @@ public class ActionTile : ActionSelectable
                 break;
 
             case State.GROWING:
+                growingPlantObj.transform.localPosition = Vector3.up * Mathf.Lerp(-4.75f, -6.25f, (growTimeLeft / (float)GROW_TIME));
                 if (growTimeLeft > 0)
                 {
                     growTimeLeft -= 1;

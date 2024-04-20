@@ -205,9 +205,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   queueBannerText: {fileID: 1562648116609303010}
-  redPlant: {fileID: 6321383543189566087, guid: 65fd6ff8f59a5c24c8dd93a3602fb853, type: 3}
+  redPlant: {fileID: 7770314806990906853, guid: 08997191dcbd9544ab8b57a832c96969, type: 3}
   bluePlant: {fileID: 1359168069308774966, guid: 08f814dbe47022d44b93531941061a82, type: 3}
   greenPlant: {fileID: 5357886128823049112, guid: aa9fc2bcdabd3f946b048980b8ad0805, type: 3}
+  growingPlantObj: {fileID: 0}
   infoBannerText: {fileID: 2061060274027780401}
   growingPlant: 0
   growTimeLeft: 0

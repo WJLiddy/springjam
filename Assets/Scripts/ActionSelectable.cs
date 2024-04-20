@@ -20,5 +20,5 @@ public abstract class ActionSelectable : MonoBehaviour
 
     // all tiles must respond to a tick and and an action
     public abstract void Tick();
-    public abstract void Action(GameManager gm);
+    public abstract void Action(GameManager gm, Vector2Int position);
 }

@@ -26,19 +26,30 @@ public class PlayerCursor : MonoBehaviour
             Transform objectHit = hit.transform;
             var gridSpot = new Vector2Int((int)objectHit.position.x, (int)objectHit.position.z);
 
-            // check if we hit something and the tile isn't queued already
-            if (objectHit && Input.GetMouseButton(0) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) == null)
+            // check if we hit something
+            if (objectHit)
             {
-                // priority always given to units
-                if(gameManager.units.ContainsKey(gridSpot))
+                // apply if the tile isn't queued already
+                if (Input.GetMouseButton(0) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) == null)
                 {
-                    actionQueue.queue.Enqueue(new ActionQueue.Action(gridSpot, gameManager.units[gridSpot]));
+                    // priority always given to units
+                    if (gameManager.units.ContainsKey(gridSpot))
+                    {
+                        actionQueue.queue.Add(new ActionQueue.Action(gridSpot, gameManager.units[gridSpot]));
+                        gameManager.updateActionQueueUI();
+                        return;
+                    }
+                    // else it's a tile action
+                    actionQueue.queue.Add(new ActionQueue.Action(gridSpot, gameManager.tileGenerator.tiles[gridSpot]));
                     gameManager.updateActionQueueUI();
-                    return;
                 }
-                // else it's a tile action
-                actionQueue.queue.Enqueue(new ActionQueue.Action(gridSpot, gameManager.tileGenerator.tiles[gridSpot]));
-                gameManager.updateActionQueueUI();
+
+                // erase
+                if (Input.GetMouseButton(2) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) != null)
+                {
+                    var v = actionQueue.queue.Find(r => r.tile == gridSpot);
+                    actionQueue.queue.Remove(v);
+                }
             }
         }
     }
