@@ -51,6 +51,12 @@ public class ActionQueue : MonoBehaviour
 
     public void TriggerAnimateCard(Action a)
     {
+        // destroy old card if set
+        if(action != null)
+        {
+            Destroy(action.Item1);
+        }
+
         // send the animated card to the position
         action = new Tuple<GameObject, Action>(createCardForAction(a), a);
         // must be direct child of cavas
@@ -115,11 +121,13 @@ public class ActionQueue : MonoBehaviour
             Debug.Log(viewportPoint);
 
             // set MIN and MAX Anchor values(positions) to the same position (ViewportPoint)
-
             // the fuck i need to add 0.4 for..?
             action.Item1.GetComponent<RectTransform>().anchorMin = Vector2.Lerp(action.Item1.GetComponent<RectTransform>().anchorMin,viewportPoint + (0.4f * Vector2.one),Time.deltaTime*4);
             action.Item1.GetComponent<RectTransform>().anchorMax = Vector2.Lerp(action.Item1.GetComponent<RectTransform>().anchorMin, viewportPoint + (0.4f * Vector2.one), Time.deltaTime * 4);
             action.Item1.GetComponent<RectTransform>().localScale = Vector3.Lerp(action.Item1.GetComponent<RectTransform>().localScale,  Vector3.zero, Time.deltaTime * 2);
+            action.Item1.GetComponent<UnityEngine.UI.Image>().color = Color.Lerp(action.Item1.GetComponent<UnityEngine.UI.Image>().color, new Color(1,1,1,0), Time.deltaTime * 2);
+
+
 
         }
     }

@@ -53,4 +53,20 @@ public class PlayerCursor : MonoBehaviour
             }
         }
     }
+
+    public void setPlantType(int i)
+    {
+        switch(i)
+        {
+            case 0:
+                selectedPlant = ActionTile.PlantType.STRAWBERRY;
+                break;
+            case 1:
+                selectedPlant = ActionTile.PlantType.STRAWBERRY;
+                break;
+            case 2:
+                selectedPlant = ActionTile.PlantType.STRAWBERRY;
+                break;
+        }
+    }
 }

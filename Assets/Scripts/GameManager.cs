@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 // in this household we love god classes
 public class GameManager : MonoBehaviour
 {
     public float timeForNextTick;
     public const float tickStepTime = 1f;
+    public float loseTime = 0f;
+    public GameObject breachingEnemy;
 
     // all the actions
     public ActionQueue actionQueue;
@@ -23,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     public TMPro.TMP_Text queueSizeText;
 
+    public List<WoodWall> backWalls;
+
     private void Start()
     {
         units = new Dictionary<Vector2Int, ActionUnit>();
@@ -30,6 +35,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(breachingEnemy != null)
+        {
+            //Camera.main.transform.LookAt(breachingEnemy.transform.position);
+            Vector3 relativePos = Camera.main.transform.position - breachingEnemy.transform.position;
+            // the second argument, upwards, defaults to Vector3.up
+            Quaternion rotation = Quaternion.LookRotation(relativePos);
+            transform.rotation = rotation;
+        }
+
+
         if(Time.time >= timeForNextTick)
         {
             timeForNextTick += tickStepTime;
@@ -98,5 +113,11 @@ public class GameManager : MonoBehaviour
             nextAction += 1;
         }
         queueSizeText.text = (1 + actionQueue.queue.Count).ToString();
+    }
+
+    public void Lose(GameObject breachingEnemy)
+    {
+        loseTime = 2f;
+        this.breachingEnemy = breachingEnemy;
     }
 }

@@ -19,9 +19,9 @@ public class ActionTile : ActionSelectable
 
     public enum PlantType
     {
-        RED,
-        BLUE,
-        GREEN
+        STRAWBERRY,
+        CARROT,
+        EGGPLANT
     }
 
     public PlantType growingPlant;
@@ -58,6 +58,7 @@ public class ActionTile : ActionSelectable
                 {
                     state = State.NONE;
                     // transfer the growing unit to the list of all
+                    clearInfoBanner();
                     gm.units[position] = growingPlantObj.GetComponent<ActionUnit>();
                     gm.units[position].transform.position = new Vector3(position.x, 0, position.y);
                     growingPlantObj = null;
@@ -82,6 +83,17 @@ public class ActionTile : ActionSelectable
                 }
                 setInfoBanner(growTimeLeft);
                 break;
+        }
+    }
+
+
+    public void Hurt()
+    {
+        if(state == State.GROWING)
+        {
+            state = State.NONE;
+            Destroy(growingPlantObj);
+            clearInfoBanner();
         }
     }
 
