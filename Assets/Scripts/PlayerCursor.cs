@@ -74,7 +74,7 @@ public class PlayerCursor : MonoBehaviour
         // check if plant is even legal
         if (selectedPlant == ActionTile.PlantType.STRAWBERRY)
         {
-            if (playerInventory.strawberrySeeds >= 0)
+            if (playerInventory.strawberrySeeds > 0)
             {
                 playerInventory.strawberrySeeds -= 1;
                 return true;
@@ -83,7 +83,7 @@ public class PlayerCursor : MonoBehaviour
 
         if (selectedPlant == ActionTile.PlantType.CARROT)
         {
-            if (playerInventory.carrotSeeds >= 0)
+            if (playerInventory.carrotSeeds > 0)
             {
                 playerInventory.carrotSeeds -= 1;
                 return true;
@@ -92,7 +92,7 @@ public class PlayerCursor : MonoBehaviour
 
         if (selectedPlant == ActionTile.PlantType.EGGPLANT)
         {
-            if (playerInventory.eggplantSeeds >= 0)
+            if (playerInventory.eggplantSeeds > 0)
             {
                 playerInventory.eggplantSeeds -= 1;
                 return true;

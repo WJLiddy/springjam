@@ -118,8 +118,6 @@ public class ActionQueue : MonoBehaviour
 
             Vector2 viewportPoint = Camera.main.WorldToViewportPoint(tilePos);  //convert game object position to VievportPoint
 
-            Debug.Log(viewportPoint);
-
             // set MIN and MAX Anchor values(positions) to the same position (ViewportPoint)
             // the fuck i need to add 0.4 for..?
             action.Item1.GetComponent<RectTransform>().anchorMin = Vector2.Lerp(action.Item1.GetComponent<RectTransform>().anchorMin,viewportPoint + (0.4f * Vector2.one),Time.deltaTime*4);
