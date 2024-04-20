@@ -38,10 +38,10 @@ public class GameManager : MonoBehaviour
         if(breachingEnemy != null)
         {
             //Camera.main.transform.LookAt(breachingEnemy.transform.position);
-            Vector3 relativePos = Camera.main.transform.position - breachingEnemy.transform.position;
+            Vector3 relativePos = breachingEnemy.transform.position - Camera.main.transform.position;
             // the second argument, upwards, defaults to Vector3.up
             Quaternion rotation = Quaternion.LookRotation(relativePos);
-            transform.rotation = rotation;
+            Camera.main.transform.rotation = rotation;
         }
 
 

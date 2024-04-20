@@ -62,10 +62,10 @@ public class PlayerCursor : MonoBehaviour
                 selectedPlant = ActionTile.PlantType.STRAWBERRY;
                 break;
             case 1:
-                selectedPlant = ActionTile.PlantType.STRAWBERRY;
+                selectedPlant = ActionTile.PlantType.CARROT;
                 break;
             case 2:
-                selectedPlant = ActionTile.PlantType.STRAWBERRY;
+                selectedPlant = ActionTile.PlantType.EGGPLANT;
                 break;
         }
     }

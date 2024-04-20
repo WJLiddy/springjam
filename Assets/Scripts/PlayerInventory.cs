@@ -19,4 +19,5 @@ public class PlayerInventory : MonoBehaviour
         textCarrot.text = CarrotSeeds.ToString();
         textEggPlant.text = eggplantSeeds.ToString();
     }
+
 }

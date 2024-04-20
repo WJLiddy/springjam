@@ -33,8 +33,8 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: spider attack
-      takeName: bug1 armarture|bug1 attack
+      name: spider armature|spider attack
+      takeName: spider armature|spider attack
       internalID: 6794618034354040990
       firstFrame: 0
       lastFrame: 23
@@ -62,8 +62,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: spider idle
-      takeName: bug1 armarture|bug1 idle
+      name: spider armature|spider idle
+      takeName: spider armature|spider idle
       internalID: -4268833079123641036
       firstFrame: 0
       lastFrame: 189
@@ -91,8 +91,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: spider walk
-      takeName: bug1 armarture|bug1 walk
+      name: spider armature|spider walk
+      takeName: spider armature|spider walk
       internalID: -5237352330016881393
       firstFrame: 0
       lastFrame: 28
