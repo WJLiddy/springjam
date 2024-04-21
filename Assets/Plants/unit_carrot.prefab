@@ -458,8 +458,9 @@ MonoBehaviour:
   hp: 3
   targ: {x: 0, y: 0}
   animator: {fileID: 9210451994693650540}
-  plantType: 0
+  plantType: 1
   heartContainer: {fileID: 7085296784741419916}
+  textPopup: {fileID: 565466413097260919, guid: 404af4096379fd04b9c8421bd4067f48, type: 3}
 --- !u!95 &9210451994693650540
 Animator:
   serializedVersion: 5

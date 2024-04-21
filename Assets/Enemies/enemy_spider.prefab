@@ -106,6 +106,7 @@ MonoBehaviour:
   animator: {fileID: 3643762762835697887}
   targ: {x: 0, y: 0}
   hc: {fileID: 4508127032293444178}
+  hp: 3
 --- !u!95 &3643762762835697887
 Animator:
   serializedVersion: 5

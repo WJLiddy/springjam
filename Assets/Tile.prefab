@@ -388,12 +388,13 @@ MonoBehaviour:
   strawberryPlant: {fileID: 5994913765948217013, guid: 6978db452ccf3654a8cb47c5979173e7, type: 3}
   carrotPlant: {fileID: 8906647525522861511, guid: 0e55ba6c289d5804f800d0fe34ef9c54, type: 3}
   eggPlantPlant: {fileID: 5127079734728384864, guid: 47c35caed66b8e4419752d6affca2b62, type: 3}
-  growingPlantObj: {fileID: 0}
+  growingPlantObj: {fileID: 565466413097260919, guid: 404af4096379fd04b9c8421bd4067f48, type: 3}
   infoBannerText: {fileID: 2061060274027780401}
   growingPlant: 0
   growTimeLeft: 0
   growTimeMax: 0
   state: 0
+  textPopup: {fileID: 565466413097260919, guid: 404af4096379fd04b9c8421bd4067f48, type: 3}
 --- !u!1 &3371795589939134966
 GameObject:
   m_ObjectHideFlags: 0

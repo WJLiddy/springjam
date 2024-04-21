@@ -11,33 +11,52 @@ public class ActionUnit : ActionSelectable
     public Animator animator;
     public ActionTile.PlantType plantType;
     public HeartContainer heartContainer;
+    public GameObject textPopup;
 
     public void Start()
     {
         clearQueueBanner();
     }
 
-    public override void Action(GameManager gm, Vector2Int p, Action a)
+    public override bool Action(GameManager gm, Vector2Int p, Action a)
     {
         animator.SetBool("move", false);
+        if(p.x == 9)
+        {
+            var t = Instantiate(textPopup);
+            t.transform.position = this.transform.position;
+            t.GetComponent<TMPro.TextMeshPro>().text = "BLOCKED!";
+            t.transform.position += Vector3.up;
+            Destroy(t, 1f);
+            return false;
+        }
+
         // attack if someone's there.
         if (gm.enemySpawner.enemies.ContainsKey(p + new Vector2Int(1, 0)))
         {
             animator.SetTrigger("attack");
             gm.enemySpawner.enemies[p + new Vector2Int(1, 0)].Hurt(gm, p + new Vector2Int(1, 0));
-            return;
+            return true;
         }
 
-        // move right if no unit there. (later, move animation.)
-        if (!gm.units.ContainsKey(p + new Vector2Int(1,0)))
+        // move right if no unit there, or nothing growing
+        if (!gm.units.ContainsKey(p + new Vector2Int(1,0)) && gm.tileGenerator.tiles[p+new Vector2Int(1,0)].state != ActionTile.State.GROWING)
         {
             gm.units.Remove(p);
             gm.units[p + new Vector2Int(1,0)] = this;
             targ = p + new Vector2Int(1, 0);
             targSet = true;
             animator.SetBool("move", true);
-            return;
+            return true;
         }
+
+        // blocked!
+        var v = Instantiate(textPopup);
+        v.transform.position = this.transform.position;
+        v.GetComponent<TMPro.TextMeshPro>().text = "BLOCKED!";
+        v.transform.position += Vector3.up;
+        Destroy(v, 1f);
+        return false;
     }
     public void Update()
     {

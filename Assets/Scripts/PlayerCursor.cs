@@ -31,12 +31,7 @@ public class PlayerCursor : MonoBehaviour
     public void setIconForCursor()
     {
         // set color of cursor
-        switch (selectedPlant)
-        {
-            case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
-            case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f, 0.5f, 0f); break;
-            case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f, 0, 0, 5f); break;
-        }
+
 
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -51,6 +46,12 @@ public class PlayerCursor : MonoBehaviour
                 // check if there's a unit here
                 if (gameManager.units.ContainsKey(gridSpot))
                 {
+                    switch (gameManager.units[gridSpot].plantType)
+                    {
+                        case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
+                        case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f, 0.5f, 0f); break;
+                        case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f, 0, 0, 5f); break;
+                    }
                     // set Move image.
                     cursorImage.sprite = moveSprite;
                     return;
@@ -64,13 +65,24 @@ public class PlayerCursor : MonoBehaviour
                     // set plant
                     if (legal)
                     {
+                        switch (selectedPlant)
+                        {
+                            case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
+                            case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f, 0.5f, 0f); break;
+                            case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f, 0, 0, 5f); break;
+                        }
                         cursorImage.sprite = plantSprite;
-
                         return;
                     }
                 }
                 else
                 {
+                    switch (targetTile.growingPlant)
+                    {
+                        case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
+                        case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f, 0.5f, 0f); break;
+                        case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f, 0, 0, 5f); break;
+                    }
                     // set harvest
                     cursorImage.sprite = harvestSprite;
                     return;
@@ -99,6 +111,12 @@ public class PlayerCursor : MonoBehaviour
             {
                 if (Input.GetMouseButton(0))
                 {
+                    // max queue size is 20?
+                    if(actionQueue.queue.Count >= 20)
+                    {
+                        return;
+                    }
+
                     if(tilesClickedWhileButtonDown.Contains(gridSpot))
                     {
                         // user already clicked on this tile this run.
@@ -146,13 +164,6 @@ public class PlayerCursor : MonoBehaviour
                 {
                     tilesClickedWhileButtonDown.Clear();
                 }
-
-                // erase (TODO)
-                //if (Input.GetMouseButton(2) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) != null)
-                //{
-                //    var v = actionQueue.queue.Find(r => r.tile == gridSpot);
-                //    actionQueue.queue.Remove(v);
-                //}
             }
         }
     }

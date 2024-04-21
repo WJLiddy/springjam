@@ -32,8 +32,14 @@ public class ActionTile : ActionSelectable
     public const int GROW_TIME_CARROT = 6;
     public const int GROW_TIME_EGGPLANT = 12;
 
+    public const float STRAW_PLANT_POS = -3.4f;
+    public const float CARROT_PLANT_POS = -5.5f;
+    public const float EGGPLANT_PLANT_POS = -7.4f;
+
     public State state = State.NONE;
     // Start is called before the first frame update
+
+    public GameObject textPopup;
 
     public void Start()
     {
@@ -41,7 +47,7 @@ public class ActionTile : ActionSelectable
         clearQueueBanner();
     }
     
-    public override void Action(GameManager gm, Vector2Int position, Action a)
+    public override bool Action(GameManager gm, Vector2Int position, Action a)
     {
         switch(state)
         {
@@ -54,19 +60,24 @@ public class ActionTile : ActionSelectable
                     case PlantType.STRAWBERRY:
                     growingPlantObj = Instantiate(strawberryPlant);
                     growTimeLeft = GROW_TIME_STRAW;
-                    break;
+                        growingPlantObj.transform.SetParent(this.transform);
+                        growingPlantObj.transform.localPosition = STRAW_PLANT_POS * Vector3.up;
+                        break;
                     case PlantType.CARROT:
                     growingPlantObj = Instantiate(carrotPlant);
                     growTimeLeft = GROW_TIME_CARROT;
-                    break;
+                        growingPlantObj.transform.SetParent(this.transform);
+                        growingPlantObj.transform.localPosition = CARROT_PLANT_POS * Vector3.up;
+                        break;
                     case PlantType.EGGPLANT:
                     growingPlantObj = Instantiate(eggPlantPlant);
                     growTimeLeft = GROW_TIME_EGGPLANT;
-                    break;
+                        growingPlantObj.transform.SetParent(this.transform);
+                        growingPlantObj.transform.localPosition = EGGPLANT_PLANT_POS * Vector3.up;
+                        break;
                 }
                 growTimeMax = growTimeLeft;
-                growingPlantObj.transform.SetParent(this.transform);
-                growingPlantObj.transform.localPosition = -6.25f * Vector3.up;
+
                 setInfoBanner(growTimeLeft);
                 break;
 
@@ -80,9 +91,18 @@ public class ActionTile : ActionSelectable
                     gm.units[position] = growingPlantObj.GetComponent<ActionUnit>();
                     gm.units[position].transform.position = new Vector3(position.x, 0, position.y);
                     growingPlantObj = null;
+                } else
+                {
+                    var v = Instantiate(textPopup);
+                    v.transform.position = this.transform.position;
+                    v.GetComponent<TMPro.TextMeshPro>().text = "EARLY!";
+                    v.transform.position += Vector3.up;
+                    Destroy(v, 1f);
+                    return false;
                 }
                 break;
         }
+        return true;
     }
 
     public override void Tick()
@@ -94,7 +114,7 @@ public class ActionTile : ActionSelectable
                 break;
 
             case State.GROWING:
-                growingPlantObj.transform.localPosition = Vector3.up * Mathf.Lerp(-4.75f, -6.25f, (growTimeLeft / growTimeMax));
+                //growingPlantObj.transform.localPosition = Vector3.up * Mathf.Lerp(-4.75f, -6.25f, (growTimeLeft / growTimeMax));
                 if (growTimeLeft > 0)
                 {
                     growTimeLeft -= 1;

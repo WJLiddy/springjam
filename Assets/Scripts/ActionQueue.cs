@@ -130,7 +130,7 @@ public class ActionQueue : MonoBehaviour
             }
 
             // animation for cards.
-            float size = (float)Math.Pow(0.99, 5.0*((double)(queuePos) + remainderTime));
+            float size = (float)Math.Pow(0.978, 5.0*((double)(queuePos) + remainderTime));
             queueDispPtr += (100*size);
             cards[v.ID].transform.localPosition = new Vector3(queueDispPtr + -100 + (100*remainderTime), 0, 0);
             cards[v.ID].transform.localScale = new Vector3(size,size,size);

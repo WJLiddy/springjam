@@ -365,11 +365,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   queueText: {fileID: 8301866931282699149}
   moveTimeLeft: 0
-  hp: 3
+  hp: 2
   targ: {x: 0, y: 0}
   animator: {fileID: 2839569561615239355}
   plantType: 0
   heartContainer: {fileID: 4342216088076536633}
+  textPopup: {fileID: 565466413097260919, guid: 404af4096379fd04b9c8421bd4067f48, type: 3}
 --- !u!95 &2839569561615239355
 Animator:
   serializedVersion: 5

@@ -14,11 +14,11 @@ public class EnemySpawner : MonoBehaviour
     // current live enemies
     public Dictionary<Vector2Int,Enemy> enemies = new Dictionary<Vector2Int, Enemy>();
 
-    public int currentDifficulty = 10;
-    public const int WAVE_DURATION = 100;
-    public int currentWave = 1;
+    private int currentDifficulty = 10;
+    public const int WAVE_DURATION = 70;
+    private int currentWave = 1;
     // ticks left in wave
-    public int waveSteps = WAVE_DURATION;
+    public int waveSteps;
     // how many subwaves
     int subwaves;
     // enemies in subwaves.
@@ -28,15 +28,17 @@ public class EnemySpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        waveSteps = WAVE_DURATION;
         makeWavePlan(currentDifficulty);
+
     }
 
     // Update is called once per frame
     public void Tick()
     {
-        Debug.Log(waveSteps + "/" + (spawnList.Count * ((double)WAVE_DURATION / (double)subwaves)));
+        Debug.Log(waveSteps + "/" + (int)(spawnList.Count * ((double)WAVE_DURATION / (double)subwaves)));
 
-        if(waveSteps == (spawnList.Count * ((double)WAVE_DURATION / (double)subwaves)))
+        if(waveSteps > 0 && (waveSteps == (int)(spawnList.Count * ((double)WAVE_DURATION / (double)subwaves))))
         {
             // pop off the spawnlist
             int xptr = 0;
@@ -67,8 +69,9 @@ public class EnemySpawner : MonoBehaviour
     void makeWavePlan(int difficulty)
     {
         int difficultyLeft = difficulty;
-        // choose 4 - 6 discrete steps
-        subwaves = Random.Range(4, 8);
+        Debug.Log(difficulty);
+        // choose 4 - 8 discrete steps
+        subwaves = Random.Range(3, 5);
         spawnList = new List<List<GameObject>>();
         for(int currentStep = subwaves - 1; currentStep >= 0; currentStep--)
         {
@@ -76,9 +79,30 @@ public class EnemySpawner : MonoBehaviour
             // while more difficulty than steps
             while((double)difficultyLeft > difficulty * ((float)currentStep / (float)subwaves))
             {
-                entry.Add(spider);
-                difficultyLeft -= 1;
+                var cnt = Random.Range(0, 3);
+                switch(cnt)
+                {
+                    case 0:
+                        entry.Add(wasp);
+                        difficultyLeft -= 1;
+                        break;
+                    case 1:
+                        if (difficulty > 15)
+                        {
+                            entry.Add(spider);
+                            difficultyLeft -= 3;
+                        }
+                        break;
+                    case 2:
+                        if (difficulty > 25)
+                        {
+                            entry.Add(stomper);
+                            difficultyLeft -= 5;
+                        }
+                        break;
+                }
             }
+            Debug.Log("Adding Entry of" + entry.Count + " enemies.");
             spawnList.Add(entry);
         }
     }

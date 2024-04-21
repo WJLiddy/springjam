@@ -386,11 +386,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   queueText: {fileID: 7176660047114643331}
   moveTimeLeft: 0
-  hp: 3
+  hp: 4
   targ: {x: 0, y: 0}
   animator: {fileID: 4600887535452792586}
-  plantType: 0
+  plantType: 2
   heartContainer: {fileID: 3958626015555036873}
+  textPopup: {fileID: 565466413097260919, guid: 404af4096379fd04b9c8421bd4067f48, type: 3}
 --- !u!4 &5507017744910302170 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25ea789354a5d3848be6067cc15a2756, type: 3}

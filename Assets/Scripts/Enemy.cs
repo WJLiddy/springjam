@@ -17,8 +17,8 @@ public class Enemy : MonoBehaviour
     public Vector2Int targ;
     public HeartContainer hc;
 
-    int hp = 3;
-    const int ATTACK_WAIT_MAX = 5;
+    public int hp;
+    const int ATTACK_WAIT_MAX = 2;
     int attackWait = ATTACK_WAIT_MAX;
 
     // Start is called before the first frame update
@@ -105,7 +105,7 @@ public class Enemy : MonoBehaviour
         // either idle or move.
         else
         {
-            var s = Random.Range(0, 4);
+            var s = Random.Range(0, 2);
             switch (s)
             {
                 case 0: state = State.MOVE; animator.SetBool("move", true);
@@ -113,7 +113,7 @@ public class Enemy : MonoBehaviour
                     gm.enemySpawner.enemies.Remove(pos);
                     gm.enemySpawner.enemies[nextTile] = this;
                     break;
-                case 1: case 2: case 3: state = State.IDLE; animator.SetBool("move", false); break;
+                case 1: state = State.IDLE; animator.SetBool("move", false); break;
             }
         }
     }

@@ -18,7 +18,13 @@ public abstract class ActionSelectable : MonoBehaviour
         queueText.text = nextAction.ToString();
     }
 
+    internal void setQueueBannerMore(int nextAction)
+    {
+        queueText.text = nextAction.ToString() + "...";
+    }
+
+
     // all tiles must respond to a tick and and an action
     public abstract void Tick();
-    public abstract void Action(GameManager gm, Vector2Int position, Action a);
+    public abstract bool Action(GameManager gm, Vector2Int position, Action a);
 }

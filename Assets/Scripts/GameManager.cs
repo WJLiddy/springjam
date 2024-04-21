@@ -12,10 +12,10 @@ public class GameManager : MonoBehaviour
 {
     public float timeForNextTick;
     public const float tickStepTime = 1f;
-    public float loseTime = 0f;
-    public float timeForNextEnemyTick = (tickStepTime / 2);
+    private float loseTime = 0f;
+    private float timeForNextEnemyTick = (tickStepTime / 2);
     public GameObject breachingEnemy;
-    public int combo = 0;
+    private int combo = 0;
     public TMPro.TMP_Text comboCounter;
 
     // all the actions
@@ -41,6 +41,20 @@ public class GameManager : MonoBehaviour
     {
         units = new Dictionary<Vector2Int, ActionUnit>();
     }
+
+    private void comboEnd()
+    {
+        // play a sound
+        // display fancy if combo lost
+        if (combo > 0)
+        {
+            transform.Find("Break").GetComponent<AudioSource>().Play();
+            // at least 90, up to 120.
+            comboCounter.fontSize = Mathf.Max(90, Mathf.Min(120, combo * 5));
+        }
+        combo = 0;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -71,6 +85,10 @@ public class GameManager : MonoBehaviour
             enemySpawner.Tick();
             enemySpawner.waveSteps -= 1;
             enemySpawner.waveTimeLeft.value = (enemySpawner.waveSteps / (float)EnemySpawner.WAVE_DURATION);
+
+
+            // if enemy destroyed something update the queue
+            validateActions();
         }
 
 
@@ -105,22 +123,34 @@ public class GameManager : MonoBehaviour
                 // what kind of action was this?
                 if (action.unit is ActionTile)
                 {
-                    tileGenerator.tiles[findPosition(action)].Action(this, findPosition(action), action);
+                    if(!tileGenerator.tiles[findPosition(action)].Action(this, findPosition(action), action))
+                    {
+                        comboEnd();
+                    }
                 }
 
                 if (action.unit is ActionUnit)
                 {
-                    units[findPosition(action)].Action(this, findPosition(action), action);
+                    if(!units[findPosition(action)].Action(this, findPosition(action), action))
+                    {
+                        comboEnd();
+                    }
                 }
-                GetComponent<AudioSource>().Play();
+                transform.Find("Hit").GetComponent<AudioSource>().Play();
             } else
             {
-                combo = 0;
+                comboEnd();
             }
-            comboCounter.text = "Combo X " + combo;
+
+
 
             updateActionQueueUI();
         }
+
+        // update combo widget
+        comboCounter.text = "Combo X " + combo;
+        comboCounter.fontSize = Mathf.Lerp(comboCounter.fontSize, 45, Time.deltaTime * 2f);
+        comboCounter.color = Color.Lerp(comboCounter.color, Color.black, Time.deltaTime * 2f);
     }
 
     public void giveComboRewards()
@@ -128,13 +158,30 @@ public class GameManager : MonoBehaviour
         if((combo % 10) == 0)
         {
             playerInventory.strawberrySeeds += 1;
+            playerInventory.carrotSeeds += (Random.Range(10,50) > combo) ? 0 : 1;
+            playerInventory.eggplantSeeds += (Random.Range(20, 100) > combo) ? 0 : 1;
+            comboCounter.color = Color.white;
+            comboCounter.fontSize = 120;
         }
+    }
+
+    // called after enemy move: make sure all actions are still valid..
+    public void validateActions()
+    {
+        // remove all actions where unit no longer exists on map
+        actionQueue.queue.RemoveAll(a => findPosition(a).x == -99);
+
+        // remove all harvests where there's no plant anymore
+        actionQueue.queue.RemoveAll(a => (!a.isPlantCommand && a.unit is ActionTile && tileGenerator.tiles[findPosition(a)].state == ActionTile.State.NONE));
+        updateActionQueueUI();
     }
 
     public void updateActionQueueUI()
     {
+        HashSet<ActionUnit> seenUnits = new HashSet<ActionUnit>();
+
         int nextAction = 1;
-        foreach (var action in actionQueue.queue.ToArray())
+        foreach (var action in actionQueue.queue)
         {
             if (action.unit is ActionTile)
             {
@@ -143,7 +190,17 @@ public class GameManager : MonoBehaviour
 
             if (action.unit is ActionUnit)
             {
-                units[findPosition(action)].setQueueBanner(nextAction);
+                // queued commands - do "..."
+                if (!seenUnits.Contains(action.unit))
+                {
+                    units[findPosition(action)].setQueueBanner(nextAction);
+                }
+                else
+                {
+                    int idx = actionQueue.queue.FindIndex(a => a.unit == action.unit);
+                    units[findPosition(action)].setQueueBannerMore(idx+1);
+                }
+                seenUnits.Add(action.unit as ActionUnit);
             }
             nextAction += 1;
         }
@@ -167,13 +224,16 @@ public class GameManager : MonoBehaviour
                 return v.Key;
             }
         }
-        Debug.LogError("No action for" + a.unit);
-        return new Vector2Int(0, 0);
+        // fuck you magic numbers
+        return new Vector2Int(-99, -99);
     }
 
     public void Lose(GameObject breachingEnemy)
     {
-        loseTime = 2f;
-        this.breachingEnemy = breachingEnemy;
+        if (this.breachingEnemy == null)
+        {
+            loseTime = 2f;
+            this.breachingEnemy = breachingEnemy;
+        }
     }
 }
