@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class ActionTile : ActionSelectable
 { 
-    public GameObject redPlant;
-    public GameObject bluePlant;
-    public GameObject greenPlant;
+    public GameObject strawberryPlant;
+    public GameObject carrotPlant;
+    public GameObject eggPlantPlant;
 
     public GameObject growingPlantObj;
 
@@ -26,7 +26,10 @@ public class ActionTile : ActionSelectable
 
     public PlantType growingPlant;
     public int growTimeLeft = 0;
-    public const int GROW_TIME = 9;
+    public int growTimeMax = 0;
+    public const int GROW_TIME_STRAW = 3;
+    public const int GROW_TIME_CARROT = 6;
+    public const int GROW_TIME_EGGPLANT = 12;
 
     public State state = State.NONE;
     // Start is called before the first frame update
@@ -45,8 +48,22 @@ public class ActionTile : ActionSelectable
             case State.NONE:
                 state = State.GROWING;
                 growingPlant = gm.playerCursor.selectedPlant;
-                growTimeLeft = GROW_TIME;
-                growingPlantObj = Instantiate(redPlant);
+                switch(gm.playerCursor.selectedPlant)
+                {
+                    case PlantType.STRAWBERRY:
+                    growingPlantObj = Instantiate(strawberryPlant);
+                    growTimeLeft = GROW_TIME_STRAW;
+                    break;
+                    case PlantType.CARROT:
+                    growingPlantObj = Instantiate(carrotPlant);
+                    growTimeLeft = GROW_TIME_CARROT;
+                    break;
+                    case PlantType.EGGPLANT:
+                    growingPlantObj = Instantiate(eggPlantPlant);
+                    growTimeLeft = GROW_TIME_EGGPLANT;
+                    break;
+                }
+                growTimeMax = growTimeLeft;
                 growingPlantObj.transform.SetParent(this.transform);
                 growingPlantObj.transform.localPosition = -6.25f * Vector3.up;
                 setInfoBanner(growTimeLeft);
@@ -76,7 +93,7 @@ public class ActionTile : ActionSelectable
                 break;
 
             case State.GROWING:
-                growingPlantObj.transform.localPosition = Vector3.up * Mathf.Lerp(-4.75f, -6.25f, (growTimeLeft / (float)GROW_TIME));
+                growingPlantObj.transform.localPosition = Vector3.up * Mathf.Lerp(-4.75f, -6.25f, (growTimeLeft / growTimeMax));
                 if (growTimeLeft > 0)
                 {
                     growTimeLeft -= 1;

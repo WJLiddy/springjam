@@ -46,6 +46,7 @@ public class ActionUnit : ActionSelectable
 
     public override void Tick()
     {
+        animator.SetBool("move", false);
         moveTimeLeft -= 1;
     }
 

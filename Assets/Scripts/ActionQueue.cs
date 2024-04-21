@@ -13,13 +13,15 @@ public class ActionQueue : MonoBehaviour
     public class Action
     {
         private static int idctr = 0;
-        public Action(Vector2Int tile, ActionSelectable unit)
+        // we def want to stack attacks/moves so only associate with the unit
+        // need to also pass a plant/grow command
+        public Action(ActionSelectable unit, bool isHarvestCommand)
         {
-            this.tile = tile;
             this.unit = unit;
             this.ID = ++idctr;
+            this.isHarvestCommand = isHarvestCommand;
         }
-        public Vector2Int tile;
+        public bool isHarvestCommand;
         public ActionSelectable unit;
         public int ID; // if actions are lost/discarded, now the UI will delete the associated game obj.
     }
@@ -28,7 +30,7 @@ public class ActionQueue : MonoBehaviour
     public List<Action> queue;
 
     // action currently animating
-    private Tuple<GameObject, Action> action;
+    private Tuple<GameObject, Vector2Int> actionCurrentlyAnimating;
 
     // prefabs for the cards
     public GameObject cardHarvest;
@@ -49,18 +51,18 @@ public class ActionQueue : MonoBehaviour
         cards = new Dictionary<int, GameObject>();
     }
 
-    public void TriggerAnimateCard(Action a)
+    public void TriggerAnimateCard(Action a, Vector2Int position)
     {
         // destroy old card if set
-        if(action != null)
+        if(actionCurrentlyAnimating != null)
         {
-            Destroy(action.Item1);
+            Destroy(actionCurrentlyAnimating.Item1);
         }
 
         // send the animated card to the position
-        action = new Tuple<GameObject, Action>(createCardForAction(a), a);
+        actionCurrentlyAnimating = new Tuple<GameObject, Vector2Int>(createCardForAction(a), position);
         // must be direct child of cavas
-        action.Item1.transform.SetParent(this.transform.parent);
+        actionCurrentlyAnimating.Item1.transform.SetParent(this.transform.parent);
     }
 
     public GameObject createCardForAction(Action v)
@@ -112,18 +114,18 @@ public class ActionQueue : MonoBehaviour
         }
 
         // animate the current action
-        if (action != null)
+        if (actionCurrentlyAnimating != null)
         {
-            var tilePos = new Vector3(action.Item2.tile.x, 0, action.Item2.tile.y);
+            var tilePos = new Vector3(actionCurrentlyAnimating.Item2.x, 0, actionCurrentlyAnimating.Item2.y);
 
             Vector2 viewportPoint = Camera.main.WorldToViewportPoint(tilePos);  //convert game object position to VievportPoint
 
             // set MIN and MAX Anchor values(positions) to the same position (ViewportPoint)
             // the fuck i need to add 0.4 for..?
-            action.Item1.GetComponent<RectTransform>().anchorMin = Vector2.Lerp(action.Item1.GetComponent<RectTransform>().anchorMin,viewportPoint + (0.4f * Vector2.one),Time.deltaTime*4);
-            action.Item1.GetComponent<RectTransform>().anchorMax = Vector2.Lerp(action.Item1.GetComponent<RectTransform>().anchorMin, viewportPoint + (0.4f * Vector2.one), Time.deltaTime * 4);
-            action.Item1.GetComponent<RectTransform>().localScale = Vector3.Lerp(action.Item1.GetComponent<RectTransform>().localScale,  Vector3.zero, Time.deltaTime * 2);
-            action.Item1.GetComponent<UnityEngine.UI.Image>().color = Color.Lerp(action.Item1.GetComponent<UnityEngine.UI.Image>().color, new Color(1,1,1,0), Time.deltaTime * 2);
+            actionCurrentlyAnimating.Item1.GetComponent<RectTransform>().anchorMin = Vector2.Lerp(actionCurrentlyAnimating.Item1.GetComponent<RectTransform>().anchorMin,viewportPoint + (0.4f * Vector2.one),Time.deltaTime*4);
+            actionCurrentlyAnimating.Item1.GetComponent<RectTransform>().anchorMax = Vector2.Lerp(actionCurrentlyAnimating.Item1.GetComponent<RectTransform>().anchorMin, viewportPoint + (0.4f * Vector2.one), Time.deltaTime * 4);
+            actionCurrentlyAnimating.Item1.GetComponent<RectTransform>().localScale = Vector3.Lerp(actionCurrentlyAnimating.Item1.GetComponent<RectTransform>().localScale,  Vector3.zero, Time.deltaTime * 2);
+            actionCurrentlyAnimating.Item1.GetComponent<UnityEngine.UI.Image>().color = Color.Lerp(actionCurrentlyAnimating.Item1.GetComponent<UnityEngine.UI.Image>().color, new Color(1,1,1,0), Time.deltaTime * 2);
 
         }
     }

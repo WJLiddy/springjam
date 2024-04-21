@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static ActionQueue;
 using static UnityEngine.GraphicsBuffer;
 
 // in this household we love god classes
@@ -14,6 +15,8 @@ public class GameManager : MonoBehaviour
     public float loseTime = 0f;
     public float timeForNextEnemyTick = (tickStepTime / 2);
     public GameObject breachingEnemy;
+    public int combo = 0;
+    public TMPro.TMP_Text comboCounter;
 
     // all the actions
     public ActionQueue actionQueue;
@@ -29,6 +32,10 @@ public class GameManager : MonoBehaviour
     public TMPro.TMP_Text queueSizeText;
 
     public List<WoodWall> backWalls;
+
+    public PlayerInventory playerInventory;
+
+
 
     private void Start()
     {
@@ -63,6 +70,7 @@ public class GameManager : MonoBehaviour
                 // holy fuck!
                 enemy.Value.Tick(this, enemy.Key);
             }
+            enemySpawner.Tick();
         }
 
 
@@ -88,24 +96,38 @@ public class GameManager : MonoBehaviour
 
             if (actionQueue.queue.Count > 0)
             {
+                combo += 1;
+                giveComboRewards();
                 var action = actionQueue.queue[0];
                 actionQueue.queue.RemoveAt(0);
-                actionQueue.TriggerAnimateCard(action);
+                actionQueue.TriggerAnimateCard(action, findPosition(action));
 
                 // what kind of action was this?
                 if (action.unit is ActionTile)
                 {
-                    tileGenerator.tiles[action.tile].Action(this, action.tile);
+                    tileGenerator.tiles[findPosition(action)].Action(this, findPosition(action));
                 }
 
                 if (action.unit is ActionUnit)
                 {
-                    units[action.tile].Action(this, action.tile);
+                    units[findPosition(action)].Action(this, findPosition(action));
                 }
                 GetComponent<AudioSource>().Play();
+            } else
+            {
+                combo = 0;
             }
+            comboCounter.text = "Combo X " + combo;
 
             updateActionQueueUI();
+        }
+    }
+
+    public void giveComboRewards()
+    {
+        if((combo % 10) == 0)
+        {
+            playerInventory.strawberrySeeds += 1;
         }
     }
 
@@ -116,16 +138,37 @@ public class GameManager : MonoBehaviour
         {
             if (action.unit is ActionTile)
             {
-                tileGenerator.tiles[action.tile].setQueueBanner(nextAction);
+                tileGenerator.tiles[findPosition(action)].setQueueBanner(nextAction);
             }
 
             if (action.unit is ActionUnit)
             {
-                units[action.tile].setQueueBanner(nextAction);
+                units[findPosition(action)].setQueueBanner(nextAction);
             }
             nextAction += 1;
         }
         queueSizeText.text = (1 + actionQueue.queue.Count).ToString();
+    }
+
+    // slow method, but who cares?
+    public Vector2Int findPosition(Action a)
+    {
+        foreach(var v in tileGenerator.tiles)
+        {
+            if(v.Value == a.unit)
+            {
+                return v.Key;
+            }
+        }
+        foreach (var v in units)
+        {
+            if (v.Value == a.unit)
+            {
+                return v.Key;
+            }
+        }
+        Debug.LogError("No action for" + a.unit);
+        return new Vector2Int(0, 0);
     }
 
     public void Lose(GameObject breachingEnemy)

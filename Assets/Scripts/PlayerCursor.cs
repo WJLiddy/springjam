@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCursor : MonoBehaviour
 {
@@ -13,6 +14,13 @@ public class PlayerCursor : MonoBehaviour
     // move cursor rig
     public Canvas canvas;
     public GameObject cursorParent;
+    public Image cursorImage;
+
+    public Sprite plantSprite;
+    public Sprite harvestSprite;
+    public Sprite moveSprite;
+
+    public HashSet<ActionSelectable> actionUnitsSeenThisClick = new HashSet<ActionSelectable>();
 
     // Start is called before the first frame update
     void Start()
@@ -20,13 +28,11 @@ public class PlayerCursor : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public void setIconForCursor()
     {
-        moveCursor();
+        cursorImage.color = Color.white;
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
         if (Physics.Raycast(ray, out hit))
         {
             Transform objectHit = hit.transform;
@@ -35,53 +41,124 @@ public class PlayerCursor : MonoBehaviour
             // check if we hit something
             if (objectHit)
             {
-                // apply if the tile isn't queued already
-                if (Input.GetMouseButton(0) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) == null)
+                // check if there's a unit here
+                if (gameManager.units.ContainsKey(gridSpot))
                 {
-                    // priority always given to units
-                    if (gameManager.units.ContainsKey(gridSpot))
+                    // set Move image.
+                    cursorImage.sprite = moveSprite;
+                    return;
+                }
+
+                // check for a plant/harvest
+                var targetTile = gameManager.tileGenerator.tiles[gridSpot];
+                if (targetTile.state == ActionTile.State.NONE)
+                {
+                    var legal = checkIfPlantLegal(false);
+                    // set plant
+                    if (legal)
                     {
-                        actionQueue.queue.Add(new ActionQueue.Action(gridSpot, gameManager.units[gridSpot]));
+                        cursorImage.sprite = plantSprite;
+                        switch(selectedPlant)
+                        {
+                            case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
+                            case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f,0.5f,0f); break;
+                            case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f,0,0,5f); break;
+
+                        }
+                        return;
+                    }
+                }
+                else
+                {
+                    // set harvest
+                    cursorImage.sprite = harvestSprite;
+                    return;
+                }
+            }
+        }
+        // set nothing
+        cursorImage.sprite = null;
+        cursorImage.color = Color.clear;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        setIconForCursor();
+        moveCursor();
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
+        {
+            Transform objectHit = hit.transform;
+            var gridSpot = new Vector2Int((int)objectHit.position.x, (int)objectHit.position.z);
+
+            // check if we hit something
+            if (objectHit)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    // check if there's a unit here
+                    if (gameManager.units.ContainsKey(gridSpot) && !actionUnitsSeenThisClick.Contains(gameManager.units[gridSpot]))
+                    {
+                        actionUnitsSeenThisClick.Add(gameManager.units[gridSpot]);
+                        // if there is, feel free to assign another move.
+                        actionQueue.queue.Add(new ActionQueue.Action(gameManager.units[gridSpot], false));
                         gameManager.updateActionQueueUI();
                         return;
                     }
 
+                    // check for a plant/harvest
                     var targetTile = gameManager.tileGenerator.tiles[gridSpot];
-                    if (targetTile.state == ActionTile.State.NONE)
+
+                    if (targetTile != null && !actionUnitsSeenThisClick.Contains(targetTile))
                     {
-                        var legal = checkIfPlantLegal();
-                        if (legal)
+                        // don't retrigger on same click
+                        actionUnitsSeenThisClick.Add(targetTile);
+                        // it's never permitted to queue harvest or plant commands.
+                        if (actionQueue.queue.Find(f => f.unit == targetTile) == null)
                         {
-                            actionQueue.queue.Add(new ActionQueue.Action(gridSpot, targetTile));
-                            gameManager.updateActionQueueUI();
+                            if (targetTile.state == ActionTile.State.NONE)
+                            {
+                                var legal = checkIfPlantLegal(true);
+                                if (legal)
+                                {
+                                    actionQueue.queue.Add(new ActionQueue.Action(targetTile, false));
+                                    gameManager.updateActionQueueUI();
+                                }
+                            }
+                            else
+                            {
+                                // else it's a harvest, always legal
+                                actionQueue.queue.Add(new ActionQueue.Action(targetTile, true));
+                                gameManager.updateActionQueueUI();
+                            }
                         }
                     }
-                    else
-                    {
-                        // else it's a harvest, always legal
-                        actionQueue.queue.Add(new ActionQueue.Action(gridSpot, targetTile));
-                        gameManager.updateActionQueueUI();
-                    }
+                }
+                else
+                {
+                    actionUnitsSeenThisClick.Clear();
                 }
 
-                // erase
-                if (Input.GetMouseButton(2) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) != null)
-                {
-                    var v = actionQueue.queue.Find(r => r.tile == gridSpot);
-                    actionQueue.queue.Remove(v);
-                }
+                // erase (TODO)
+                //if (Input.GetMouseButton(2) && actionQueue.queue.ToList().Find(r => r.tile == gridSpot) != null)
+                //{
+                //    var v = actionQueue.queue.Find(r => r.tile == gridSpot);
+                //    actionQueue.queue.Remove(v);
+                //}
             }
         }
     }
 
-    public bool checkIfPlantLegal()
+    public bool checkIfPlantLegal(bool takeAction)
     {
         // check if plant is even legal
         if (selectedPlant == ActionTile.PlantType.STRAWBERRY)
         {
             if (playerInventory.strawberrySeeds > 0)
             {
-                playerInventory.strawberrySeeds -= 1;
+                playerInventory.strawberrySeeds -= takeAction ? 1 : 0;
                 return true;
             }
         }
@@ -90,7 +167,7 @@ public class PlayerCursor : MonoBehaviour
         {
             if (playerInventory.carrotSeeds > 0)
             {
-                playerInventory.carrotSeeds -= 1;
+                playerInventory.carrotSeeds -= takeAction ? 1 : 0; 
                 return true;
             }
         }
@@ -99,7 +176,7 @@ public class PlayerCursor : MonoBehaviour
         {
             if (playerInventory.eggplantSeeds > 0)
             {
-                playerInventory.eggplantSeeds -= 1;
+                playerInventory.eggplantSeeds -= takeAction ? 1 : 0; 
                 return true;
             }
         }
