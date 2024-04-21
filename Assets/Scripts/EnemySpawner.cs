@@ -36,8 +36,6 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     public void Tick()
     {
-        Debug.Log(waveSteps + "/" + (int)(spawnList.Count * ((double)WAVE_DURATION / (double)subwaves)));
-
         if(waveSteps > 0 && (waveSteps == (int)(spawnList.Count * ((double)WAVE_DURATION / (double)subwaves))))
         {
             // pop off the spawnlist
@@ -46,7 +44,7 @@ public class EnemySpawner : MonoBehaviour
             foreach(var v in spawnList[0])
             {
                 yptr++;
-                if(yptr == 5)
+                if(yptr == 4)
                 {
                     yptr = 0;
                     xptr++;
@@ -110,8 +108,16 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy(GameObject g, int x, int y)
     {
+        int maxEnemyExtent = 11;
+
+        foreach(var e in enemies.Keys)
+        {
+            //if there is an enemy in this lane we must not spawn anything here
+            maxEnemyExtent = Mathf.Max(maxEnemyExtent, e.x + 1);
+        }
+
         var v = Instantiate(g);
-        var pos = new Vector2Int(11 + x, y);
+        var pos = new Vector2Int(maxEnemyExtent + x, y);
         v.transform.position = new Vector3(pos.x, 0, pos.y);
         enemies[pos] = v.GetComponent<Enemy>();
     }

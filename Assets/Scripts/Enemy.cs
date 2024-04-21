@@ -131,11 +131,26 @@ public class Enemy : MonoBehaviour
     public void Hurt(GameManager gm, Vector2Int pos)
     {
         hp -= 1;
+
+        var corot = HurtFinal(new object[] { gm, pos });
+        // induce a small delay to help with heart animation
+        StartCoroutine(corot);
+    }
+
+    // to quote hammy, this is fucked up
+    public IEnumerator HurtFinal(object[] param)
+    {
+        GameManager gm = (GameManager)param[0];
+        Vector2Int pos = (Vector2Int)param[1];
+
+        // won't work at higher tempos!!! at 0.5 though this will probably run before the next update.
+        yield return new WaitForSeconds(0.5f);
         hc.setHealth(hp);
-        if(hp <= 0)
+        if (hp <= 0)
         {
             gm.enemySpawner.enemies.Remove(pos);
             Destroy(this.gameObject);
         }
+        yield return null;
     }
 }

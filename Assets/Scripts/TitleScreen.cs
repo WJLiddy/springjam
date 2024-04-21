@@ -10,5 +10,11 @@ public class TitleScreen : MonoBehaviour
     {
         // change to farm scene
         SceneManager.LoadScene("Farm");
+
+    }
+
+    public void Update()
+    {
+        transform.Find("Text").transform.position = new Vector3(450, 300 + 50 * Mathf.Sin(2*Time.time), 0);
     }
 }

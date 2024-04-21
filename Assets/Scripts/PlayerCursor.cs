@@ -20,6 +20,8 @@ public class PlayerCursor : MonoBehaviour
     public Sprite harvestSprite;
     public Sprite moveSprite;
 
+    public Tutorial tutorial;
+
     public HashSet<Vector2Int> tilesClickedWhileButtonDown = new HashSet<Vector2Int>();
 
     // Start is called before the first frame update
@@ -97,6 +99,12 @@ public class PlayerCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // fuck lol
+        bool readyForHarvest = gameManager.tileGenerator.tiles.Values.ToList().FindAll(v => (v.state == ActionTile.State.GROWING) && (v.growTimeLeft == 0)).Count > 0;
+        if(readyForHarvest)
+        {
+            tutorial.Progress(3);
+        }
         setIconForCursor();
         moveCursor();
         RaycastHit hit;
@@ -128,6 +136,11 @@ public class PlayerCursor : MonoBehaviour
                     // check if there's a unit here
                     if (gameManager.units.ContainsKey(gridSpot) )
                     {
+                        tutorial.Progress(5);
+                        if(actionQueue.queue.Find(f => f.unit == gameManager.units[gridSpot]) != null)
+                        {
+                            tutorial.Progress(6);
+                        }
                         // if there is, feel free to assign another move.
                         actionQueue.queue.Add(new ActionQueue.Action(gameManager.units[gridSpot], false, ActionTile.PlantType.STRAWBERRY));
                         gameManager.updateActionQueueUI();
@@ -147,12 +160,17 @@ public class PlayerCursor : MonoBehaviour
                                 var legal = checkIfPlantLegal(true);
                                 if (legal)
                                 {
+                                    if (selectedPlant == ActionTile.PlantType.STRAWBERRY)
+                                    {
+                                        tutorial.Progress(2);
+                                    }
                                     actionQueue.queue.Add(new ActionQueue.Action(targetTile, true, selectedPlant));
                                     gameManager.updateActionQueueUI();
                                 }
                             }
                             else
                             {
+                                tutorial.Progress(4);
                                 // else it's a harvest, always legal
                                 actionQueue.queue.Add(new ActionQueue.Action(targetTile, false, ActionTile.PlantType.STRAWBERRY));
                                 gameManager.updateActionQueueUI();
@@ -205,6 +223,7 @@ public class PlayerCursor : MonoBehaviour
         switch(i)
         {
             case 0:
+                tutorial.Progress(1);
                 selectedPlant = ActionTile.PlantType.STRAWBERRY;
                 break;
             case 1:

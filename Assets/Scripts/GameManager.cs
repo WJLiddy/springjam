@@ -11,12 +11,13 @@ using static UnityEngine.GraphicsBuffer;
 public class GameManager : MonoBehaviour
 {
     public double timeForNextTick;
-    public const double tickStepTime = 1f;
+    public const double tickStepTime = 1.5f;
     private float loseTime = 0f;
     private double timeForNextEnemyTick = (tickStepTime / 2);
     public GameObject breachingEnemy;
     private int combo = 0;
     public TMPro.TMP_Text comboCounter;
+    public Tutorial tutorial;
 
     // all the actions
     public ActionQueue actionQueue;
@@ -84,7 +85,7 @@ public class GameManager : MonoBehaviour
             }
             enemySpawner.Tick();
             enemySpawner.waveSteps -= 1;
-            enemySpawner.waveTimeLeft.value = (enemySpawner.waveSteps / (float)EnemySpawner.WAVE_DURATION);
+            enemySpawner.waveTimeLeft.value = 1f - (enemySpawner.waveSteps / (float)EnemySpawner.WAVE_DURATION);
 
 
             // if enemy destroyed something update the queue
@@ -95,6 +96,10 @@ public class GameManager : MonoBehaviour
         if (Time.timeSinceLevelLoadAsDouble >= timeForNextTick)
         {
             timeForNextTick += tickStepTime;
+
+
+            // check everything in case player died
+            validateActions();
 
             // all tiles tick
             foreach (var tile in tileGenerator.tiles.Values)
@@ -131,6 +136,7 @@ public class GameManager : MonoBehaviour
 
                 if (action.unit is ActionUnit)
                 {
+                    Debug.Log(findPosition(action));
                     if(!units[findPosition(action)].Action(this, findPosition(action), action))
                     {
                         comboEnd();
@@ -157,6 +163,7 @@ public class GameManager : MonoBehaviour
     {
         if((combo % 10) == 0)
         {
+            tutorial.Progress(7);
             playerInventory.strawberrySeeds += 1;
             playerInventory.carrotSeeds += (Random.Range(10,50) > combo) ? 0 : 1;
             playerInventory.eggplantSeeds += (Random.Range(20, 100) > combo) ? 0 : 1;
@@ -173,6 +180,9 @@ public class GameManager : MonoBehaviour
 
         // remove all harvests where there's no plant anymore
         actionQueue.queue.RemoveAll(a => (!a.isPlantCommand && a.unit is ActionTile && tileGenerator.tiles[findPosition(a)].state == ActionTile.State.NONE));
+
+        // remove all commands where an enemy is standing (should catch all plant commands)
+        actionQueue.queue.RemoveAll(a => (enemySpawner.enemies.ContainsKey(findPosition(a))));
         updateActionQueueUI();
     }
 

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TileGenerator : MonoBehaviour
 {
-    public int WIDTH = 10;
-    public int HEIGHT = 5;
+    private int WIDTH = 10;
+    private int HEIGHT = 4;
     public GameObject tileBase;
     public Dictionary<Vector2Int, ActionTile> tiles;
 
