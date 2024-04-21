@@ -14,24 +14,28 @@ public class EnemySpawner : MonoBehaviour
     // current live enemies
     public Dictionary<Vector2Int,Enemy> enemies = new Dictionary<Vector2Int, Enemy>();
 
-
+    public int currentDifficulty = 10;
     public const int WAVE_DURATION = 100;
+    public int currentWave = 1;
     // ticks left in wave
     public int waveSteps = WAVE_DURATION;
     // how many subwaves
     int subwaves;
     // enemies in subwaves.
     List<List<GameObject>> spawnList;
+    public TMPro.TMP_Text waveText;
 
     // Start is called before the first frame update
     void Start()
     {
-        makeWavePlan(30);
+        makeWavePlan(currentDifficulty);
     }
 
     // Update is called once per frame
     public void Tick()
     {
+        Debug.Log(waveSteps + "/" + (spawnList.Count * ((double)WAVE_DURATION / (double)subwaves)));
+
         if(waveSteps == (spawnList.Count * ((double)WAVE_DURATION / (double)subwaves)))
         {
             // pop off the spawnlist
@@ -45,9 +49,18 @@ public class EnemySpawner : MonoBehaviour
                     yptr = 0;
                     xptr++;
                 }
-                SpawnEnemy(v, Random.Range(xptr, 10+yptr));
+                SpawnEnemy(v, xptr, yptr);
             }
             spawnList.RemoveAt(0);
+        }
+
+        if(waveSteps == 0)
+        {
+            waveSteps = WAVE_DURATION;
+            currentDifficulty = (int)(Mathf.Pow(currentDifficulty, 1.2f) - currentDifficulty);
+            makeWavePlan(currentDifficulty);
+            currentWave += 1;
+            waveText.text = "Wave " + currentWave.ToString();
         }
     }
 
@@ -70,10 +83,10 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void SpawnEnemy(GameObject g, int y)
+    void SpawnEnemy(GameObject g, int x, int y)
     {
         var v = Instantiate(g);
-        var pos = new Vector2Int(10, y);
+        var pos = new Vector2Int(11 + x, y);
         v.transform.position = new Vector3(pos.x, 0, pos.y);
         enemies[pos] = v.GetComponent<Enemy>();
     }

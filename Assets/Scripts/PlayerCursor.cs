@@ -20,7 +20,7 @@ public class PlayerCursor : MonoBehaviour
     public Sprite harvestSprite;
     public Sprite moveSprite;
 
-    public HashSet<ActionSelectable> actionUnitsSeenThisClick = new HashSet<ActionSelectable>();
+    public HashSet<Vector2Int> tilesClickedWhileButtonDown = new HashSet<Vector2Int>();
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +30,14 @@ public class PlayerCursor : MonoBehaviour
 
     public void setIconForCursor()
     {
-        cursorImage.color = Color.white;
+        // set color of cursor
+        switch (selectedPlant)
+        {
+            case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
+            case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f, 0.5f, 0f); break;
+            case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f, 0, 0, 5f); break;
+        }
+
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit))
@@ -58,13 +65,7 @@ public class PlayerCursor : MonoBehaviour
                     if (legal)
                     {
                         cursorImage.sprite = plantSprite;
-                        switch(selectedPlant)
-                        {
-                            case ActionTile.PlantType.STRAWBERRY: cursorImage.color = Color.red; break;
-                            case ActionTile.PlantType.CARROT: cursorImage.color = new Color(1f,0.5f,0f); break;
-                            case ActionTile.PlantType.EGGPLANT: cursorImage.color = new Color(0.5f,0,0,5f); break;
 
-                        }
                         return;
                     }
                 }
@@ -98,12 +99,19 @@ public class PlayerCursor : MonoBehaviour
             {
                 if (Input.GetMouseButton(0))
                 {
-                    // check if there's a unit here
-                    if (gameManager.units.ContainsKey(gridSpot) && !actionUnitsSeenThisClick.Contains(gameManager.units[gridSpot]))
+                    if(tilesClickedWhileButtonDown.Contains(gridSpot))
                     {
-                        actionUnitsSeenThisClick.Add(gameManager.units[gridSpot]);
+                        // user already clicked on this tile this run.
+                        return;
+                    }
+
+                    tilesClickedWhileButtonDown.Add(gridSpot);
+
+                    // check if there's a unit here
+                    if (gameManager.units.ContainsKey(gridSpot) )
+                    {
                         // if there is, feel free to assign another move.
-                        actionQueue.queue.Add(new ActionQueue.Action(gameManager.units[gridSpot], false));
+                        actionQueue.queue.Add(new ActionQueue.Action(gameManager.units[gridSpot], false, ActionTile.PlantType.STRAWBERRY));
                         gameManager.updateActionQueueUI();
                         return;
                     }
@@ -111,10 +119,8 @@ public class PlayerCursor : MonoBehaviour
                     // check for a plant/harvest
                     var targetTile = gameManager.tileGenerator.tiles[gridSpot];
 
-                    if (targetTile != null && !actionUnitsSeenThisClick.Contains(targetTile))
+                    if (targetTile != null)
                     {
-                        // don't retrigger on same click
-                        actionUnitsSeenThisClick.Add(targetTile);
                         // it's never permitted to queue harvest or plant commands.
                         if (actionQueue.queue.Find(f => f.unit == targetTile) == null)
                         {
@@ -123,14 +129,14 @@ public class PlayerCursor : MonoBehaviour
                                 var legal = checkIfPlantLegal(true);
                                 if (legal)
                                 {
-                                    actionQueue.queue.Add(new ActionQueue.Action(targetTile, false));
+                                    actionQueue.queue.Add(new ActionQueue.Action(targetTile, true, selectedPlant));
                                     gameManager.updateActionQueueUI();
                                 }
                             }
                             else
                             {
                                 // else it's a harvest, always legal
-                                actionQueue.queue.Add(new ActionQueue.Action(targetTile, true));
+                                actionQueue.queue.Add(new ActionQueue.Action(targetTile, false, ActionTile.PlantType.STRAWBERRY));
                                 gameManager.updateActionQueueUI();
                             }
                         }
@@ -138,7 +144,7 @@ public class PlayerCursor : MonoBehaviour
                 }
                 else
                 {
-                    actionUnitsSeenThisClick.Clear();
+                    tilesClickedWhileButtonDown.Clear();
                 }
 
                 // erase (TODO)

@@ -21,7 +21,7 @@ public class HeartContainer : MonoBehaviour
         foreach (GameObject heart in hearts)
         {
             ctr++;
-            heart.SetActive(hp <= ctr);
+            heart.SetActive(hp >= ctr);
         }
     }
 }

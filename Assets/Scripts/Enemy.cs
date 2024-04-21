@@ -33,6 +33,13 @@ public class Enemy : MonoBehaviour
         // attack if allied in front.
         var nextTile = pos + new Vector2Int(-1, 0);
 
+        // stay put if enemy in front of us
+        if(gm.enemySpawner.enemies.ContainsKey(nextTile))
+        {
+            state = State.IDLE; animator.SetBool("move", false);
+            return;
+        }
+
         if (gm.units.ContainsKey(nextTile))
         {
             attackWait -= 1;
@@ -128,7 +135,7 @@ public class Enemy : MonoBehaviour
         if(hp <= 0)
         {
             gm.enemySpawner.enemies.Remove(pos);
+            Destroy(this.gameObject);
         }
-        Destroy(this.gameObject);
     }
 }

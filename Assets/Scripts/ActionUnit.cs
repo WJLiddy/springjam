@@ -1,4 +1,6 @@
 using UnityEngine;
+using static ActionQueue;
+using static UnityEditor.PlayerSettings;
 
 public class ActionUnit : ActionSelectable
 {
@@ -7,21 +9,22 @@ public class ActionUnit : ActionSelectable
     public Vector2Int targ;
     private bool targSet = false;
     public Animator animator;
-
+    public ActionTile.PlantType plantType;
+    public HeartContainer heartContainer;
 
     public void Start()
     {
         clearQueueBanner();
     }
 
-    public override void Action(GameManager gm, Vector2Int p)
+    public override void Action(GameManager gm, Vector2Int p, Action a)
     {
         animator.SetBool("move", false);
         // attack if someone's there.
         if (gm.enemySpawner.enemies.ContainsKey(p + new Vector2Int(1, 0)))
         {
             animator.SetTrigger("attack");
-            gm.enemySpawner.enemies[p + new Vector2Int(1, 0)].Hurt(gm, p);
+            gm.enemySpawner.enemies[p + new Vector2Int(1, 0)].Hurt(gm, p + new Vector2Int(1, 0));
             return;
         }
 
@@ -53,6 +56,7 @@ public class ActionUnit : ActionSelectable
     public void Hurt(GameManager gm, Vector2Int p)
     {
         hp -= 1;
+        heartContainer.setHealth(hp);
         if (hp <= 0)
         {
             Destroy(gameObject);

@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using static ActionQueue;
 
 public class ActionTile : ActionSelectable
 { 
@@ -40,15 +41,15 @@ public class ActionTile : ActionSelectable
         clearQueueBanner();
     }
     
-    public override void Action(GameManager gm, Vector2Int position)
+    public override void Action(GameManager gm, Vector2Int position, Action a)
     {
         switch(state)
         {
             // player wants to plant
             case State.NONE:
                 state = State.GROWING;
-                growingPlant = gm.playerCursor.selectedPlant;
-                switch(gm.playerCursor.selectedPlant)
+                growingPlant = a.plantType;
+                switch (a.plantType)
                 {
                     case PlantType.STRAWBERRY:
                     growingPlantObj = Instantiate(strawberryPlant);

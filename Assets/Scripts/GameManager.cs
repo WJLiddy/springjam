@@ -61,8 +61,6 @@ public class GameManager : MonoBehaviour
         if(Time.time >= timeForNextEnemyTick)
         {
             timeForNextEnemyTick += tickStepTime;
-            enemySpawner.waveSteps -= 1;
-            enemySpawner.waveTimeLeft.value = 1 - (timeForNextEnemyTick / enemySpawner.waveSteps);
             // all enemies tick on offbeat?
             // convert to list so that underlying datastruct can change
             foreach (var enemy in enemySpawner.enemies.ToList())
@@ -71,6 +69,8 @@ public class GameManager : MonoBehaviour
                 enemy.Value.Tick(this, enemy.Key);
             }
             enemySpawner.Tick();
+            enemySpawner.waveSteps -= 1;
+            enemySpawner.waveTimeLeft.value = (enemySpawner.waveSteps / (float)EnemySpawner.WAVE_DURATION);
         }
 
 
@@ -105,12 +105,12 @@ public class GameManager : MonoBehaviour
                 // what kind of action was this?
                 if (action.unit is ActionTile)
                 {
-                    tileGenerator.tiles[findPosition(action)].Action(this, findPosition(action));
+                    tileGenerator.tiles[findPosition(action)].Action(this, findPosition(action), action);
                 }
 
                 if (action.unit is ActionUnit)
                 {
-                    units[findPosition(action)].Action(this, findPosition(action));
+                    units[findPosition(action)].Action(this, findPosition(action), action);
                 }
                 GetComponent<AudioSource>().Play();
             } else

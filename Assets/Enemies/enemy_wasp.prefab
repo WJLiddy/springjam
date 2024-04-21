@@ -106,7 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 8487005677304487224}
   targ: {x: 0, y: 0}
-  hc: {fileID: 0}
+  hc: {fileID: 8399373743808094049}
 --- !u!95 &8487005677304487224
 Animator:
   serializedVersion: 5
@@ -202,3 +202,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4684404201718111224, guid: 77c380fab6dc3ec4d9b3cd1d5fb53672, type: 3}
   m_PrefabInstance: {fileID: 3463328787833807398}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8399373743808094049 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4936128560199597383, guid: 77c380fab6dc3ec4d9b3cd1d5fb53672, type: 3}
+  m_PrefabInstance: {fileID: 3463328787833807398}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32cfb84b8dfe7f479b2cfb20194ef51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
