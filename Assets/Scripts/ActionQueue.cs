@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
 
 public class ActionQueue : MonoBehaviour
 {
@@ -120,7 +118,7 @@ public class ActionQueue : MonoBehaviour
         int queuePos = 0;
         float queueDispPtr = 0;
         // Will be a float between 0 and 1, so pow it
-        float remainderTime = MathF.Pow(((gameManager.timeForNextTick - Time.time) / GameManager.tickStepTime),4);
+        float remainderTime = MathF.Pow((float)((gameManager.timeForNextTick - Time.timeSinceLevelLoadAsDouble) / GameManager.tickStepTime),4);
         foreach(var v in queue)
         {
             // lookup if there's an item for this card. if not, create it.

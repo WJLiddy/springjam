@@ -58,8 +58,9 @@ public class EnemySpawner : MonoBehaviour
 
         if(waveSteps == 0)
         {
-            waveSteps = WAVE_DURATION;
-            currentDifficulty = (int)(Mathf.Pow(currentDifficulty, 1.2f) - currentDifficulty);
+            // will get -'d later
+            waveSteps = WAVE_DURATION + 1;
+            currentDifficulty += 5;
             makeWavePlan(currentDifficulty);
             currentWave += 1;
             waveText.text = "Wave " + currentWave.ToString();

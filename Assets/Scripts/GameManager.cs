@@ -10,10 +10,10 @@ using static UnityEngine.GraphicsBuffer;
 // in this household we love god classes
 public class GameManager : MonoBehaviour
 {
-    public float timeForNextTick;
-    public const float tickStepTime = 1f;
+    public double timeForNextTick;
+    public const double tickStepTime = 1f;
     private float loseTime = 0f;
-    private float timeForNextEnemyTick = (tickStepTime / 2);
+    private double timeForNextEnemyTick = (tickStepTime / 2);
     public GameObject breachingEnemy;
     private int combo = 0;
     public TMPro.TMP_Text comboCounter;
@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if(Time.time >= timeForNextEnemyTick)
+        if(Time.timeSinceLevelLoadAsDouble >= timeForNextEnemyTick)
         {
             timeForNextEnemyTick += tickStepTime;
             // all enemies tick on offbeat?
@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        if (Time.time >= timeForNextTick)
+        if (Time.timeSinceLevelLoadAsDouble >= timeForNextTick)
         {
             timeForNextTick += tickStepTime;
 

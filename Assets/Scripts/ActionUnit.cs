@@ -1,6 +1,5 @@
 using UnityEngine;
 using static ActionQueue;
-using static UnityEditor.PlayerSettings;
 
 public class ActionUnit : ActionSelectable
 {

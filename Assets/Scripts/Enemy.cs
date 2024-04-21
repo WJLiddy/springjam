@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     public HeartContainer hc;
 
     public int hp;
-    const int ATTACK_WAIT_MAX = 2;
+    const int ATTACK_WAIT_MAX = 5;
     int attackWait = ATTACK_WAIT_MAX;
 
     // Start is called before the first frame update
