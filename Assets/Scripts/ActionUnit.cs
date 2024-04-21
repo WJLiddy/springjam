@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static ActionTile;
 
 public class ActionUnit : ActionSelectable
 {
     public int moveTimeLeft = 0;
     public int hp = 3;
+    public Vector2Int targ;
+    private bool targSet = false;
 
 
     public void Start()
@@ -28,8 +27,16 @@ public class ActionUnit : ActionSelectable
         {
             gm.units.Remove(p);
             gm.units[p + new Vector2Int(1,0)] = this;
-            this.transform.position = new Vector3(this.transform.position.x + 1, this.transform.position.y, this.transform.position.z);
+            targ = p + new Vector2Int(1, 0);
+            targSet = true;
             return;
+        }
+    }
+    public void Update()
+    {
+        if (targSet)
+        {
+            this.transform.position = Vector3.MoveTowards(this.transform.position, new Vector3(targ.x, 0, targ.y), Time.deltaTime);
         }
     }
 

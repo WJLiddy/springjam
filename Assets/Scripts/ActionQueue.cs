@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
@@ -40,7 +41,6 @@ public class ActionQueue : MonoBehaviour
     // all current cards
     public Dictionary<int,GameObject> cards;
 
-    public Canvas canvas;
 
     // Start is called before the first frame update
     void Start()
@@ -95,7 +95,7 @@ public class ActionQueue : MonoBehaviour
             // animation for cards.
             float size = (float)Math.Pow(0.99, 5.0*((double)(queuePos) + remainderTime));
             queueDispPtr += (100*size);
-            cards[v.ID].transform.localPosition = new Vector3(queueDispPtr + (100*remainderTime), 0, 0);
+            cards[v.ID].transform.localPosition = new Vector3(queueDispPtr + -100 + (100*remainderTime), 0, 0);
             cards[v.ID].transform.localScale = new Vector3(size,size,size);
             queuePos++;
         }
@@ -125,9 +125,9 @@ public class ActionQueue : MonoBehaviour
             action.Item1.GetComponent<RectTransform>().localScale = Vector3.Lerp(action.Item1.GetComponent<RectTransform>().localScale,  Vector3.zero, Time.deltaTime * 2);
             action.Item1.GetComponent<UnityEngine.UI.Image>().color = Color.Lerp(action.Item1.GetComponent<UnityEngine.UI.Image>().color, new Color(1,1,1,0), Time.deltaTime * 2);
 
-
-
         }
     }
+
+
 
 }

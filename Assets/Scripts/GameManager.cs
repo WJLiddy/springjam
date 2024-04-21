@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public float timeForNextTick;
     public const float tickStepTime = 1f;
     public float loseTime = 0f;
+    public float timeForNextEnemyTick = (tickStepTime / 2);
     public GameObject breachingEnemy;
 
     // all the actions
@@ -42,11 +43,25 @@ public class GameManager : MonoBehaviour
             Vector3 relativePos = breachingEnemy.transform.position - Camera.main.transform.position;
             // the second argument, upwards, defaults to Vector3.up
             Quaternion rotation = Quaternion.LookRotation(relativePos);
-            Camera.main.transform.rotation = rotation;
+            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation,rotation,Time.deltaTime);
             loseTime -= Time.deltaTime;
             if(loseTime <= 0)
             {
                 SceneManager.LoadScene("Title");
+            }
+        }
+
+        if(Time.time >= timeForNextEnemyTick)
+        {
+            timeForNextEnemyTick += tickStepTime;
+            enemySpawner.waveSteps -= 1;
+            enemySpawner.waveTimeLeft.value = 1 - (timeForNextEnemyTick / enemySpawner.waveSteps);
+            // all enemies tick on offbeat?
+            // convert to list so that underlying datastruct can change
+            foreach (var enemy in enemySpawner.enemies.ToList())
+            {
+                // holy fuck!
+                enemy.Value.Tick(this, enemy.Key);
             }
         }
 
@@ -69,14 +84,6 @@ public class GameManager : MonoBehaviour
                 unit.Tick();
                 // will be reset in UpdateActionQueue
                 unit.clearQueueBanner();
-            }
-
-            // all enemies tick (maybe on offbeat??)
-            // convert to list so that underlying datastruct can change
-            foreach(var enemy in enemySpawner.enemies.ToList())
-            {
-                // holy fuck!
-                enemy.Value.Tick(this, enemy.Key);
             }
 
             if (actionQueue.queue.Count > 0)

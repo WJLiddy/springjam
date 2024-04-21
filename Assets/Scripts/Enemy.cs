@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     State state;
     public Animator animator;
     public Vector2Int targ;
+    public HeartContainer hc;
 
     int hp = 3;
 
@@ -29,7 +30,6 @@ public class Enemy : MonoBehaviour
     { 
         // attack if allied in front.
         var nextTile = pos + new Vector2Int(-1, 0);
-        Debug.Log(nextTile);
         if (gm.units.ContainsKey(nextTile))
         {
             targ = nextTile;
@@ -95,6 +95,7 @@ public class Enemy : MonoBehaviour
     public void Hurt(GameManager gm, Vector2Int pos)
     {
         hp -= 1;
+        hc.setHealth(hp);
         if(hp <= 0)
         {
             gm.enemySpawner.enemies.Remove(pos);

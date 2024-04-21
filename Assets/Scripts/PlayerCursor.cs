@@ -10,6 +10,10 @@ public class PlayerCursor : MonoBehaviour
     public PlayerInventory playerInventory;
     public ActionTile.PlantType selectedPlant;
 
+    // move cursor rig
+    public Canvas canvas;
+    public GameObject cursorParent;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +23,7 @@ public class PlayerCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        moveCursor();
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -116,4 +121,14 @@ public class PlayerCursor : MonoBehaviour
                 break;
         }
     }
+
+
+    public void moveCursor()
+    {
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out pos);
+        cursorParent.transform.position = canvas.transform.TransformPoint(pos);
+    }
 }
+
+
