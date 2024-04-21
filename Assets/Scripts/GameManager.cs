@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         // display fancy if combo lost
         if (combo > 0)
         {
-            transform.Find("Break").GetComponent<AudioSource>().Play();
+            sfxPlay("Break");
             // at least 90, up to 120.
             comboCounter.fontSize = Mathf.Max(90, Mathf.Min(120, combo * 5));
         }
@@ -67,6 +67,11 @@ public class GameManager : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(relativePos);
             Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation,rotation,Time.deltaTime);
             loseTime -= Time.deltaTime;
+
+            if(loseTime < 1)
+            {
+                FindObjectOfType<PlayerInventory>().cynFadeOut = false;
+            }
             if(loseTime <= 0)
             {
                 SceneManager.LoadScene("Title");
@@ -128,6 +133,25 @@ public class GameManager : MonoBehaviour
                 // what kind of action was this?
                 if (action.unit is ActionTile)
                 {
+                    if(action.isPlantCommand)
+                    {
+                        switch(action.plantType)
+                        {
+                            case ActionTile.PlantType.STRAWBERRY:
+                                sfxPlay("Digsmall");
+                                break;
+                            case ActionTile.PlantType.CARROT:
+                                sfxPlay("Digmed");
+                                break;
+                           case ActionTile.PlantType.EGGPLANT:
+                                sfxPlay("Digbig");
+                                break;                                   
+                        }
+                    }
+                    else
+                    {
+                        sfxPlay("Harvest");
+                    }
                     if(!tileGenerator.tiles[findPosition(action)].Action(this, findPosition(action), action))
                     {
                         comboEnd();
@@ -136,13 +160,11 @@ public class GameManager : MonoBehaviour
 
                 if (action.unit is ActionUnit)
                 {
-                    Debug.Log(findPosition(action));
                     if(!units[findPosition(action)].Action(this, findPosition(action), action))
                     {
                         comboEnd();
                     }
                 }
-                transform.Find("Hit").GetComponent<AudioSource>().Play();
             } else
             {
                 comboEnd();
@@ -245,5 +267,11 @@ public class GameManager : MonoBehaviour
             loseTime = 2f;
             this.breachingEnemy = breachingEnemy;
         }
+    }
+
+    public void sfxPlay(string name)
+    {
+
+        transform.Find(name).GetComponent<AudioSource>().Play();
     }
 }

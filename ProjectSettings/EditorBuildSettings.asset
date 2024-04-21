@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Farm.unity
-    guid: f50fb6b311f9b784abcced67c2b0f004
-  - enabled: 1
     path: Assets/Scenes/Title.unity
     guid: 9022dc15de724f442b695e1337a145c7
+  - enabled: 1
+    path: Assets/Scenes/Farm.unity
+    guid: f50fb6b311f9b784abcced67c2b0f004
   m_configObjects: {}

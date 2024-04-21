@@ -25,6 +25,7 @@ public class ActionUnit : ActionSelectable
         // attack if someone's there.
         if (gm.enemySpawner.enemies.ContainsKey(p + new Vector2Int(1, 0)))
         {
+            gm.sfxPlay("Damage");
             animator.SetTrigger("attack");
             gm.enemySpawner.enemies[p + new Vector2Int(1, 0)].Hurt(gm, p + new Vector2Int(1, 0));
             return true;
@@ -33,6 +34,7 @@ public class ActionUnit : ActionSelectable
         // move right if no unit there, or nothing growing
         if ((p.x < 9) && !gm.units.ContainsKey(p + new Vector2Int(1,0)) && gm.tileGenerator.tiles[p+new Vector2Int(1,0)].state != ActionTile.State.GROWING)
         {
+            gm.sfxPlay("Step");
             gm.units.Remove(p);
             gm.units[p + new Vector2Int(1,0)] = this;
             targ = p + new Vector2Int(1, 0);
@@ -80,6 +82,7 @@ public class ActionUnit : ActionSelectable
         // won't work at higher tempos!!! at 0.5 though this will probably run before the next update.
         yield return new WaitForSeconds(0.5f);
         heartContainer.setHealth(hp);
+        gm.sfxPlay("DamageFriend");
         if (hp <= 0)
         {
             Destroy(gameObject);

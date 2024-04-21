@@ -141,6 +141,8 @@ public class PlayerCursor : MonoBehaviour
                         {
                             tutorial.Progress(6);
                         }
+
+                        gameManager.sfxPlay("Click");
                         // if there is, feel free to assign another move.
                         actionQueue.queue.Add(new ActionQueue.Action(gameManager.units[gridSpot], false, ActionTile.PlantType.STRAWBERRY));
                         gameManager.updateActionQueueUI();
@@ -164,6 +166,7 @@ public class PlayerCursor : MonoBehaviour
                                     {
                                         tutorial.Progress(2);
                                     }
+                                    gameManager.sfxPlay("Click");
                                     actionQueue.queue.Add(new ActionQueue.Action(targetTile, true, selectedPlant));
                                     gameManager.updateActionQueueUI();
                                 }
@@ -172,6 +175,7 @@ public class PlayerCursor : MonoBehaviour
                             {
                                 tutorial.Progress(4);
                                 // else it's a harvest, always legal
+                                gameManager.sfxPlay("Click");
                                 actionQueue.queue.Add(new ActionQueue.Action(targetTile, false, ActionTile.PlantType.STRAWBERRY));
                                 gameManager.updateActionQueueUI();
                             }

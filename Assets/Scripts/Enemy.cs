@@ -78,18 +78,17 @@ public class Enemy : MonoBehaviour
         // if we reached rank 0, attack the back fences
         else if (pos.x == 0)
         {
-            if (gm.backWalls[pos.y].hp >= 0)
+            if (gm.backWalls[pos.y].alive)
             {
-                attackWait -= 1;
-                if (attackWait == 0)
-                {
-                    attackWait = ATTACK_WAIT_MAX;
-                    state = State.ATTACK; animator.SetBool("move", false); animator.SetTrigger("attack");
-                    gm.backWalls[pos.y].Hurt();
-                } else
-                {
-                    state = State.IDLE; animator.SetBool("move", false);
-                }
+
+                attackWait = ATTACK_WAIT_MAX;
+                state = State.ATTACK; animator.SetBool("move", false); animator.SetTrigger("attack");
+                gm.backWalls[pos.y].Trigger();
+                hp = 0;
+                Hurt(gm, pos);
+
+                state = State.IDLE; animator.SetBool("move", false);
+
             }
 
             else
