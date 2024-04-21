@@ -6,6 +6,7 @@ public class ActionUnit : ActionSelectable
     public int hp = 3;
     public Vector2Int targ;
     private bool targSet = false;
+    public Animator animator;
 
 
     public void Start()
@@ -15,9 +16,11 @@ public class ActionUnit : ActionSelectable
 
     public override void Action(GameManager gm, Vector2Int p)
     {
+        animator.SetBool("move", false);
         // attack if someone's there.
         if (gm.enemySpawner.enemies.ContainsKey(p + new Vector2Int(1, 0)))
         {
+            animator.SetTrigger("attack");
             gm.enemySpawner.enemies[p + new Vector2Int(1, 0)].Hurt(gm, p);
             return;
         }
@@ -29,6 +32,7 @@ public class ActionUnit : ActionSelectable
             gm.units[p + new Vector2Int(1,0)] = this;
             targ = p + new Vector2Int(1, 0);
             targSet = true;
+            animator.SetBool("move", true);
             return;
         }
     }

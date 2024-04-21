@@ -21,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 6726320847108358793, guid: bc5b1a57c08eae04485fe7d3e3c83204, type: 3}
+  m_Motion: {fileID: -6470629874631423709, guid: 695effa608574024e975d97ffe27471a, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -38,10 +38,10 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 8848583107383961309}
-    m_Position: {x: 330, y: 390, z: 0}
+    m_Position: {x: 310, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 467146859717660797}
-    m_Position: {x: 330, y: 470, z: 0}
+    m_Position: {x: 300, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6438471169901090893}
     m_Position: {x: 590, y: 110, z: 0}
@@ -61,7 +61,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Stomper
+  m_Name: Carrot
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: attack
@@ -135,7 +135,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 5311954556997559600, guid: bc5b1a57c08eae04485fe7d3e3c83204, type: 3}
+  m_Motion: {fileID: -6209938582867082708, guid: 695effa608574024e975d97ffe27471a, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -235,7 +235,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 5692909654645879738, guid: bc5b1a57c08eae04485fe7d3e3c83204, type: 3}
+  m_Motion: {fileID: 5385460160306358092, guid: 695effa608574024e975d97ffe27471a, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
